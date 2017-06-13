@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.UserIncomeMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.UserIncome" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_channel_id" property="userChannelId" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="app_channel_id" property="appChannelId" jdbcType="INTEGER" />
+    <result column="sub_openid" property="subOpenid" jdbcType="VARCHAR" />
+    <result column="sub_nickname" property="subNickname" jdbcType="VARCHAR" />
+    <result column="fee" property="fee" jdbcType="INTEGER" />
+    <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, user_id, user_channel_id, app_id, app_name, app_channel_id, sub_openid, sub_nickname, 
+    fee, subscribe_time, create_time
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_income
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="com.wxd.spread.core.model.UserIncome">
+    select
+    <include refid="Base_Column_List" />
+    from user_income
+    <where>
+    	<if test="userId != null" >
+	       user_id = #{userId,jdbcType=INTEGER}
+	    </if>
+	    <if test="userChannelId != null" >
+	       app_channel_id = #{userChannelId,jdbcType=INTEGER}
+	    </if>
+	    <if test="appId != null" >
+	       app_id = #{appId,jdbcType=INTEGER}
+	    </if>
+	    <if test="appName != null" >
+	       app_name like CONCAT('%',#{appName,jdbcType=VARCHAR},'%')
+	    </if>
+	    <if test="appChannelId != null" >
+	       app_channel_id = #{appChannelId,jdbcType=INTEGER}
+	    </if>
+	    <if test="subOpenid != null" >
+	       sub_openid = #{subOpenid,jdbcType=INTEGER}
+	    </if>
+	    <if test="subNickname != null" >
+	       sub_nickname like CONCAT('%',#{subNickname,jdbcType=VARCHAR},'%')
+	    </if>
+    </where>
+    order by create_time desc
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.UserIncome" >
+    insert into user_income (user_id, user_channel_id, 
+      app_id, app_channel_id, sub_openid, 
+      sub_nickname, fee, subscribe_time, create_time
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userChannelId,jdbcType=INTEGER}, 
+      #{appId,jdbcType=INTEGER}, #{appChannelId,jdbcType=INTEGER}, #{subOpenid,jdbcType=VARCHAR}, 
+      #{subNickname,jdbcType=VARCHAR}, #{fee,jdbcType=INTEGER}, #{subscribeTime,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <select id="selectMapGroupByUserId" resultType="java.util.HashMap">
+    	select user_id,sum(fee) as totalFee from user_income where app_id = #{appId}  
+    	<if test="appChannelIdList != null">
+    		and user_channel_id in 
+    		<foreach collection="appChannelIdList" item="channelId" index="index"
+            open="(" close=")" separator=",">
+            	#{channelId}
+        	</foreach>
+    	</if>
+    	<![CDATA[and subscribe_time >= #{startDateLong} and subscribe_time <= #{endDateLong}]]>
+    	group by user_id 
+  </select>
+  
+</mapper>

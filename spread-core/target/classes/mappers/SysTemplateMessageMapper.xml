@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.SysTemplateMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.SysTemplateMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="template_key" property="templateKey" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="template" property="template" jdbcType="BIT" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="disabled" property="disabled" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, template_key, title, content, template, template_id, disabled, create_time
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_template_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findByTemplateKey" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_template_message
+    where template_key = #{templateKey,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByDisabled" resultMap="BaseResultMap" parameterType="java.lang.Boolean" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_template_message
+    <if test="disabled != null" >
+    	where disabled = #{disabled,jdbcType=BIT}
+    </if>
+    order by id asc
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.SysTemplateMessage" >
+    insert into sys_template_message (template_key, title, 
+      content, template, template_id, 
+      disabled, create_time)
+    values (#{templateKey,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{template,jdbcType=BIT}, #{templateId,jdbcType=VARCHAR}, 
+      #{disabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateDisabledStatus" parameterType="map" >
+    update sys_template_message set disabled = #{disabled,jdbcType=BIT} where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="update" parameterType="com.wxd.spread.core.model.SysTemplateMessage" >
+    update sys_template_message
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

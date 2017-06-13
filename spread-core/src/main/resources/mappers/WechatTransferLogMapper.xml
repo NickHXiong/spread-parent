@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.WechatTransferLogMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.WechatTransferLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_withdrawal_id" property="userWithdrawalId" jdbcType="INTEGER" />
+    <result column="nonce_str" property="nonceStr" jdbcType="VARCHAR" />
+    <result column="partner_trade_no" property="partnerTradeNo" jdbcType="VARCHAR" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="re_user_name" property="reUserName" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="spbill_create_ip" property="spbillCreateIp" jdbcType="VARCHAR" />
+    <result column="return_code" property="returnCode" jdbcType="VARCHAR" />
+    <result column="return_msg" property="returnMsg" jdbcType="VARCHAR" />
+    <result column="result_code" property="resultCode" jdbcType="VARCHAR" />
+    <result column="err_code" property="errCode" jdbcType="VARCHAR" />
+    <result column="err_code_des" property="errCodeDes" jdbcType="VARCHAR" />
+    <result column="payment_no" property="paymentNo" jdbcType="VARCHAR" />
+    <result column="payment_time" property="paymentTime" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <insert id="insert" parameterType="com.wxd.spread.core.model.WechatTransferLog" >
+    insert into wechat_transfer_log (user_withdrawal_id, nonce_str, 
+      partner_trade_no, openid, re_user_name, 
+      amount, desc, spbill_create_ip, 
+      return_code, return_msg, result_code, 
+      err_code, err_code_des, payment_no, 
+      payment_time, create_time)
+    values (#{userWithdrawalId,jdbcType=INTEGER}, #{nonceStr,jdbcType=VARCHAR}, 
+      #{partnerTradeNo,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, #{reUserName,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=INTEGER}, #{desc,jdbcType=VARCHAR}, #{spbillCreateIp,jdbcType=VARCHAR}, 
+      #{returnCode,jdbcType=VARCHAR}, #{returnMsg,jdbcType=VARCHAR}, #{resultCode,jdbcType=VARCHAR}, 
+      #{errCode,jdbcType=VARCHAR}, #{errCodeDes,jdbcType=VARCHAR}, #{paymentNo,jdbcType=VARCHAR}, 
+      #{paymentTime,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="countByPartnerTradeNo" resultType="java.lang.Integer" >
+    select count(*) from wechat_transfer_log where partner_trade_no = #{partnerTradeNo,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

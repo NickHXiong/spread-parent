@@ -1,0 +1,42 @@
+package com.wxd.spread.admin.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.github.pagehelper.PageInfo;
+import com.wxd.spread.admin.util.PageUtils;
+import com.wxd.spread.core.model.User;
+import com.wxd.spread.core.service.UserService;
+
+/**
+ * 用户控制器
+ * @author wangxiaodan
+ *
+ */
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	@Autowired
+	private UserService userService;
+	
+	/**
+	 * 用户列表
+	 * @return
+	 */
+	@RequestMapping("/list")
+	public ModelAndView list(HttpServletRequest request,Integer page,Integer pageSize) {
+		ModelAndView mv = new ModelAndView();
+		
+		int pageInt = PageUtils.getPage(page);
+		int pageSizeInt = PageUtils.getPageSize(pageSize);
+		PageInfo<User> pageInfo = userService.list(pageInt, pageSizeInt);
+		mv.addObject("pageInfo", pageInfo);
+		
+		mv.setViewName("user/user_list");
+		return mv;
+	}
+}

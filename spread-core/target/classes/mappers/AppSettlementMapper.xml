@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.AppSettlementMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.AppSettlement" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="app_channel_id" property="appChannelId" jdbcType="INTEGER" />
+    <result column="amount_fee" property="amountFee" jdbcType="INTEGER" />
+    <result column="date_from" property="dateFrom" jdbcType="TIMESTAMP" />
+    <result column="date_end" property="dateEnd" jdbcType="TIMESTAMP" />
+    <result column="describe" property="describe" jdbcType="VARCHAR" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, app_id, app_channel_id, amount_fee, date_from, date_end, `describe`, admin_id, 
+    create_time
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_settlement
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.AppSettlement" >
+    insert into app_settlement (app_id, app_channel_id, 
+      amount_fee, date_from, date_end, 
+      `describe`, admin_id, create_time
+      )
+    values (#{appId,jdbcType=INTEGER}, #{appChannelId,jdbcType=INTEGER}, 
+      #{amountFee,jdbcType=INTEGER}, #{dateFrom,jdbcType=TIMESTAMP}, #{dateEnd,jdbcType=TIMESTAMP}, 
+      #{describe,jdbcType=VARCHAR}, #{adminId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="com.wxd.spread.core.model.AppSettlement" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_settlement
+	<where>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=INTEGER}
+      </if>
+      <if test="adminId != null" >
+        AND admin_id = #{adminId,jdbcType=INTEGER}
+      </if>
+      <if test="dateFrom != null" >
+        AND date_from >= #{dateFrom,jdbcType=TIMESTAMP}
+      </if>
+      <if test="dateEnd != null" >
+        <![CDATA[AND date_end <= #{dateEnd,jdbcType=INTEGER}]]>
+      </if>
+	</where>    
+    order by create_time desc
+  </select>
+</mapper>

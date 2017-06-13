@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="language" property="language" jdbcType="VARCHAR" />
+    <result column="headimgurl" property="headimgurl" jdbcType="VARCHAR" />
+    <result column="subscribe" property="subscribe" jdbcType="BIT" />
+    <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="groupid" property="groupid" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="balance" property="balance" jdbcType="INTEGER" />
+    <result column="wait_balance" property="waitBalance" jdbcType="INTEGER" />
+    <result column="user_level_id" property="userLevelId" jdbcType="INTEGER" />
+    <result column="integral" property="integral" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, openid, nickname, sex, city, country, province, language, headimgurl, subscribe, 
+    subscribe_time, create_time, groupid, remark, balance, wait_balance,user_level_id, integral
+  </sql>
+  
+  <select id="selectByOpenid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where openid = #{openid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <update id="updateSubscribe"  >
+    update user set subscribe = 1,subscribe_time = #{time,jdbcType=INTEGER}
+      where openid = #{openid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateUnsubscribe"  >
+    update user set subscribe = 0,subscribe_time = #{time,jdbcType=INTEGER}
+      where openid = #{openid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.User" >
+    insert into user (openid, nickname, 
+      sex, city, country, 
+      province, language, headimgurl, 
+      subscribe, subscribe_time, create_time, 
+      groupid, remark, balance, wait_balance,
+      user_level_id, integral)
+    values (#{openid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR}, #{headimgurl,jdbcType=VARCHAR}, 
+      #{subscribe,jdbcType=BIT}, #{subscribeTime,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{groupid,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{balance,jdbcType=INTEGER}, #{waitBalance,jdbcType=INTEGER}, 
+      #{userLevelId,jdbcType=INTEGER}, #{integral,jdbcType=INTEGER})
+  </insert>
+  
+  
+  <select id="selectList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    order by create_time
+  </select>
+  
+  <update id="plusWaitBalance"  >
+    update user set wait_balance = wait_balance + #{fee,jdbcType=INTEGER}
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="unfreezeUserBalance"  >
+    update user set wait_balance = wait_balance - #{fee,jdbcType=INTEGER},balance = balance + #{fee,jdbcType=INTEGER}
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

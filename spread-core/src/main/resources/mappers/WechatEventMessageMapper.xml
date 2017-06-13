@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.WechatEventMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.WechatEventMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="event_time" property="eventTime" jdbcType="INTEGER" />
+    <result column="msg_type" property="msgType" jdbcType="VARCHAR" />
+    <result column="wechat_event" property="wechatEvent" jdbcType="VARCHAR" />
+    <result column="wechat_event_key" property="wechatEventKey" jdbcType="VARCHAR" />
+    <result column="ticket" property="ticket" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="precision" property="precision" jdbcType="DOUBLE" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="msg_id" property="msgId" jdbcType="INTEGER" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="media_id" property="mediaId" jdbcType="VARCHAR" />
+    <result column="format" property="format" jdbcType="VARCHAR" />
+    <result column="recognition" property="recognition" jdbcType="VARCHAR" />
+    <result column="thumb_media_id" property="thumbMediaId" jdbcType="VARCHAR" />
+    <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="read" property="read" jdbcType="BIT" />
+    <result column="read_admin_id" property="readAdminId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, openid, event_time, msg_type, wechat_event, wechat_event_key, ticket, latitude, 
+    longitude, `precision`, content, msg_id, pic_url, media_id, format, recognition, thumb_media_id, 
+    label, title, url, `read`, read_admin_id, create_time
+  </sql>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.WechatEventMessage" >
+    insert into wechat_event_message (openid, event_time, 
+      msg_type, wechat_event, wechat_event_key, 
+      ticket, latitude, longitude, 
+      `precision`, content, msg_id, 
+      pic_url, media_id, format, 
+      recognition, thumb_media_id, label, 
+      title, url, `read`, read_admin_id, 
+      create_time)
+    values (#{openid,jdbcType=VARCHAR}, #{eventTime,jdbcType=INTEGER}, 
+      #{msgType,jdbcType=VARCHAR}, #{wechatEvent,jdbcType=VARCHAR}, #{wechatEventKey,jdbcType=VARCHAR}, 
+      #{ticket,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE}, #{longitude,jdbcType=DOUBLE}, 
+      #{precision,jdbcType=DOUBLE}, #{content,jdbcType=VARCHAR}, #{msgId,jdbcType=INTEGER}, 
+      #{picUrl,jdbcType=VARCHAR}, #{mediaId,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, 
+      #{recognition,jdbcType=VARCHAR}, #{thumbMediaId,jdbcType=VARCHAR}, #{label,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{read,jdbcType=BIT}, #{readAdminId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="read">
+    update wechat_event_message set `read` = 1,readAdminId = #{adminId,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from wechat_event_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from wechat_event_message
+    <where>
+      <if test="record.openid != null" >
+        openid like CONCAT('%',#{record.openid,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="record.msgType != null" >
+        AND msg_type = #{record.msgType,jdbcType=VARCHAR}
+      </if>
+      <if test="record.wechatEvent != null" >
+        AND wechat_event = #{record.wechatEvent,jdbcType=VARCHAR}
+      </if>
+      <if test="record.read != null" >
+        AND `read` = #{record.read,jdbcType=BIT}
+      </if>
+      <if test="record.readAdminId != null" >
+        AND read_admin_id = #{record.readAdminId,jdbcType=INTEGER}
+      </if>
+      <if test="startDate != null" >
+        AND create_time >= #{startDate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endDate != null" >
+         <![CDATA[AND create_time <= #{endDate,jdbcType=TIMESTAMP}]]>
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>

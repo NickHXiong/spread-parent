@@ -1,0 +1,7 @@
+com/wxd/spread/wechat/controller/UserController.class
+com/wxd/spread/wechat/listener/InitMenuListener.class
+com/wxd/spread/wechat/controller/AppController.class
+com/wxd/spread/wechat/controller/WxMpPortalController.class
+com/wxd/spread/wechat/aop/ControllerLogAspect.class
+com/wxd/spread/wechat/interceptor/WechatAuthInterceptor.class
+com/wxd/spread/wechat/controller/CodeImageController.class

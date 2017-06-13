@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.SubscribeSuccMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.SubscribeSucc" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="appid" property="appid" jdbcType="VARCHAR" />
+    <result column="success" property="success" jdbcType="BIT" />
+    <result column="push_limit" property="pushLimit" jdbcType="BIT" />
+    <result column="describe" property="describe" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, openid, app_id,appid, success, push_limit, `describe`, create_time
+  </sql>
+  
+  
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from subscribe_succ
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByAppIdAndOpenid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from subscribe_succ
+    where openid = #{openid,jdbcType=VARCHAR} and app_id = #{appId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from subscribe_succ
+    <where>
+      <if test="subscribeSucc.openid != null" >
+        openid = #{subscribeSucc.openid,jdbcType=VARCHAR}
+      </if>
+      <if test="subscribeSucc.appId != null" >
+        AND app_id = #{subscribeSucc.appId,jdbcType=INTEGER}
+      </if>
+      <if test="subscribeSucc.success != null" >
+        AND success = #{subscribeSucc.success,jdbcType=BIT}
+      </if>
+      <if test="subscribeSucc.pushLimit != null" >
+        AND push_limit = #{subscribeSucc.pushLimit,jdbcType=BIT}
+      </if>
+      <if test="startDate != null" >
+        AND  create_time >= #{startDate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endDate != null" >
+         <![CDATA[AND create_time <= #{endDate,jdbcType=TIMESTAMP}]]>
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.SubscribeSucc" >
+    insert into subscribe_succ (openid, app_id, appid,success, 
+      push_limit, `describe`, create_time
+      )
+    values (#{openid,jdbcType=VARCHAR}, #{appId,jdbcType=INTEGER},#{appid,jdbcType=VARCHAR}, #{success,jdbcType=BIT}, 
+      #{pushLimit,jdbcType=BIT}, #{describe,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <select id="countSelective" resultType="java.lang.Long" >
+    select count(*) from subscribe_succ
+    <where>
+    	<if test="openid != null">
+    		openid = #{openid,jdbcType=VARCHAR}
+    	</if>
+    	<if test="appId != null">
+    		AND app_id = #{appId,jdbcType=INTEGER}
+    	</if>
+    	<if test="appid != null">
+    		AND appid = #{appid,jdbcType=VARCHAR}
+    	</if>
+    	<if test="success != null" >
+	        AND success = #{success,jdbcType=BIT}
+	    </if>
+	    <if test="pushLimit != null" >
+	        AND push_limit = #{pushLimit,jdbcType=BIT}
+	    </if>
+    </where>
+  </select>
+  
+  <update id="updateSuccByOpenidAndAppid">
+  	update subscribe_succ set success = 1 where openid = #{openid,jdbcType=VARCHAR} and appid = #{appid,jdbcType=VARCHAR}
+  </update>
+</mapper>

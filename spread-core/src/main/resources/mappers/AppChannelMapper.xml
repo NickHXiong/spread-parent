@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.AppChannelMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.AppChannel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="scene_value" property="sceneValue" jdbcType="VARCHAR" />
+    <result column="channel_url" property="channelUrl" jdbcType="VARCHAR" />
+    <result column="ticket" property="ticket" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="INTEGER" />
+    <result column="percentage" property="percentage" jdbcType="INTEGER" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="max_num" property="maxNum" jdbcType="INTEGER" />
+    <result column="filter_sex" property="filterSex" jdbcType="VARCHAR" />
+    <result column="filter_city" property="filterCity" jdbcType="VARCHAR" />
+    <result column="filter_country" property="filterCountry" jdbcType="VARCHAR" />
+    <result column="filter_province" property="filterProvince" jdbcType="VARCHAR" />
+    <result column="filter_language" property="filterLanguage" jdbcType="VARCHAR" />
+    <result column="disabled" property="disabled" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, app_id, scene_value, channel_url, ticket, price, percentage, priority, expire_date, 
+    max_num, filter_sex, filter_city, filter_country, filter_province, filter_language, 
+    disabled, create_time
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_channel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from app_channel
+    <where>
+    	<if test="appChannel != null">
+	    	<if test="appChannel.appId != null">
+	    		app_id = #{appChannel.appId,jdbcType=INTEGER}
+	    	</if>
+	    	<if test="appChannel.sceneValue != null">
+	    		AND scene_value like CONCAT('%',#{appChannel.sceneValue,jdbcType=VARCHAR},'%')
+	    	</if>
+	    	<if test="appChannel.channelUrl != null">
+	    		AND channel_url like CONCAT('%',#{appChannel.channelUrl,jdbcType=VARCHAR},'%')
+	    	</if>
+	    	<if test="appChannel.ticket != null">
+	    		AND ticket like CONCAT('%',#{appChannel.ticket,jdbcType=VARCHAR},'%')
+	    	</if>
+	    	<if test="appChannel.disabled != null">
+	    		AND disabled = #{appChannel.disabled,jdbcType=BIT}
+	    	</if>
+    	</if>
+    	<if test="priceMin != null">
+    		AND price >= #{priceMin,jdbcType=INTEGER}
+    	</if>
+    	<if test="priceMax != null">
+    		<![CDATA[AND price <= #{priceMax,jdbcType=INTEGER}]]>
+    	</if>
+    </where>
+  </select>
+  
+  <select id="selectBySceneValue" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_channel
+    where scene_value = #{sceneValue,jdbcType=VARCHAR}
+    <if test="disabled != null"> and disabled = #{disabled,jdbcType=BIT}</if>
+  </select>
+  
+  <select id="selectByAppIdAndSceneValue" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_channel
+    where scene_value = #{sceneValue,jdbcType=VARCHAR} and app_id = #{appId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByAppId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_channel
+    where app_id = #{appId,jdbcType=INTEGER}
+  </select>
+  
+  <update id="updateDisabledStatus">
+    update app_channel set disabled = #{disabled,jdbcType=BIT} where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updatePriority">
+    update app_channel set priority = #{priority,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateFilterFieldById" parameterType="com.wxd.spread.core.model.AppChannel" >
+    update app_channel set expire_date = #{appChannel.expireDate,jdbcType=TIMESTAMP},
+	    max_num = #{appChannel.maxNum,jdbcType=INTEGER},
+	    filter_sex = #{appChannel.filterSex,jdbcType=VARCHAR},
+	    filter_city = #{appChannel.filterCity,jdbcType=VARCHAR},
+	    filter_country = #{appChannel.filterCountry,jdbcType=VARCHAR},
+	    filter_province = #{appChannel.filterProvince,jdbcType=VARCHAR},
+	    filter_language = #{appChannel.filterLanguage,jdbcType=VARCHAR}
+     where id = #{appChannel.id,jdbcType=INTEGER}
+  </update>
+  
+   <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.AppChannel" >
+    insert into app_channel (app_id, scene_value, 
+      channel_url, ticket, price, 
+      percentage, priority, expire_date, 
+      max_num, filter_sex, filter_city, 
+      filter_country, filter_province, filter_language, 
+      disabled, create_time)
+    values (#{appId,jdbcType=INTEGER}, #{sceneValue,jdbcType=VARCHAR}, 
+      #{channelUrl,jdbcType=VARCHAR}, #{ticket,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, 
+      #{percentage,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, #{expireDate,jdbcType=TIMESTAMP}, 
+      #{maxNum,jdbcType=INTEGER}, #{filterSex,jdbcType=VARCHAR}, #{filterCity,jdbcType=VARCHAR}, 
+      #{filterCountry,jdbcType=VARCHAR}, #{filterProvince,jdbcType=VARCHAR}, #{filterLanguage,jdbcType=VARCHAR}, 
+      #{disabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  
+  <select id="selectUsableChannel" resultMap="BaseResultMap">
+    select 
+		t2.id, t2.app_id, t2.scene_value, t2.channel_url, t2.ticket, t2.price, t2.percentage,
+		t2.priority, t2.expire_date, t2.max_num, t2.filter_sex, t2.filter_city, t2.filter_country, 
+		t2.filter_province, t2.filter_language, t2.disabled, t2.create_time
+	from app t1,app_channel t2 
+	where t1.id = t2.app_id and t1.disabled = false and t2.disabled = false 
+	order by t1.priority desc,t2.priority desc,t1.create_time desc,t2.create_time desc
+  </select>
+  
+  
+  <select id="findFirstUsableChannel" resultMap="BaseResultMap">
+    select 
+		<include refid="Base_Column_List" />
+	from app_channel 
+		where app_id = #{appId,jdbcType=INTEGER} and disabled = false
+		order by priority desc,create_time desc limit 1
+  </select>
+</mapper>

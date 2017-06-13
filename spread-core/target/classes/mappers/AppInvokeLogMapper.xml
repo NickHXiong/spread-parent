@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.AppInvokeLogMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.AppInvokeLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="appid" property="appid" jdbcType="VARCHAR" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="scene_value" property="sceneValue" jdbcType="VARCHAR" />
+    <result column="invoke_time" property="invokeTime" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, appid, openid, scene_value, invoke_time, create_time
+  </sql>
+  
+  
+  <select id="selectById" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_invoke_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.AppInvokeLog" >
+    insert into app_invoke_log (appid, openid, 
+      scene_value, invoke_time, create_time
+      )
+    values (#{appid,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
+      #{sceneValue,jdbcType=VARCHAR}, #{invokeTime,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from app_invoke_log
+    <where>
+	      <if test="record.appid != null" >
+	        appid = #{record.appid,jdbcType=VARCHAR}
+	      </if>
+	      <if test="record.openid != null" >
+	        AND openid = #{record.openid,jdbcType=VARCHAR}
+	      </if>
+	      <if test="record.sceneValue != null" >
+	        AND scene_value = #{record.sceneValue,jdbcType=VARCHAR}
+	      </if>
+    		<if test="startDate != null" >
+	        AND  create_time >= #{startDate,jdbcType=TIMESTAMP}
+	      </if>
+	      <if test="endDate != null" >
+	         <![CDATA[AND create_time <= #{endDate,jdbcType=TIMESTAMP}]]>
+	      </if>
+    </where>
+    order by create_time desc
+  </select>
+  
+  <select id="countByAppidAndOpenidAndSceneValueAndInvokeTime" resultType="java.lang.Long" >
+    select count(*) from app_invoke_log
+    where appid = #{appid,jdbcType=VARCHAR} and openid = #{openid,jdbcType=VARCHAR} 
+    	and scene_value = #{sceneValue,jdbcType=VARCHAR} and invoke_time = #{invokeTime,jdbcType=INTEGER}
+  </select>
+</mapper>

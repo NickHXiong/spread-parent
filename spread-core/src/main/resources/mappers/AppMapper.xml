@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.AppMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.App" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="appid" property="appid" jdbcType="VARCHAR" />
+    <result column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="white_invoke_urls" property="whiteInvokeUrls" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="disabled" property="disabled" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    id, appid, app_name, white_invoke_urls, company_name, `priority`, disabled,create_time
+  </sql>
+  
+  <select id="selectByAppid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from app
+    where appid = #{appid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from app
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectListByCondition" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from app
+    <where >
+      	<if test="appid != null and appName != ''">
+	         appid = #{appid,jdbcType=VARCHAR}
+	    </if> 
+	    <if test="appName != null and appName != ''">
+	        AND app_name like CONCAT('%',#{appName,jdbcType=VARCHAR},'%')
+	    </if>
+	    <if test="companyName != null and companyName != ''">
+	        AND company_name like CONCAT('%',#{companyName,jdbcType=VARCHAR},'%')
+	    </if>
+	    <if test="disabled != null">
+	    	AND disabled = #{disabled,jdbcType=BIT}
+	    </if>
+    </where>
+  </select>
+  
+  
+  <select id="listAbledOrderPriority" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from app 
+    where disabled = 0 order by priority desc,create_time desc
+  </select>
+  
+  <select id="listAbledOrderName" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from app 
+    where disabled = 0 order by convert(app_name using gbk) asc
+  </select>
+  
+  <select id="listAllOrderName" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from app order by convert(app_name using gbk) asc
+  </select>
+  
+  <update id="updateDisabledById" >
+    update app set disabled = #{disabled,jdbcType=BIT} where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <update id="updateById" parameterType="com.wxd.spread.core.model.App" >
+    update app 
+    set app_name = #{appName,jdbcType=VARCHAR},
+      white_invoke_urls = #{whiteInvokeUrls,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      disabled = #{disabled,jdbcType=BIT} 
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.App" >
+    insert into app (id, appid, app_name, 
+      white_invoke_urls, company_name, priority, 
+      disabled, create_time)
+    values (#{id,jdbcType=INTEGER}, #{appid,jdbcType=VARCHAR}, #{appName,jdbcType=VARCHAR}, 
+      #{whiteInvokeUrls,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, 
+      #{disabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+</mapper>

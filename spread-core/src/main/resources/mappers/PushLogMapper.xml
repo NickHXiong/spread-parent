@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.PushLogMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.PushLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="user_channel_id" property="userChannelId" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="app_channel_id" property="appChannelId" jdbcType="INTEGER" />
+    <result column="success" property="success" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    id, openid, user_id, nickname, user_channel_id, app_id, app_name, app_channel_id, 
+    success, create_time
+  </sql>
+  
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from push_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectUnsuccFirstPushLog" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from push_log
+    where app_id = #{appId,jdbcType=INTEGER} and openid = #{openid,jdbcType=VARCHAR} and <![CDATA[create_time < ]]>#{date,jdbcType=TIMESTAMP}
+    order by create_time desc limit 1
+  </select>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from push_log
+    <where>
+	      <if test="pushLog.openid != null" >
+	        openid = #{pushLog.openid,jdbcType=INTEGER}
+	      </if>
+	      <if test="pushLog.userId != null" >
+	         AND user_id = #{pushLog.userId,jdbcType=INTEGER}
+	      </if>
+	      <if test="pushLog.nickname != null" >
+	        AND nickname like  CONCAT('%',#{pushLog.nickname,jdbcType=VARCHAR},'%')
+	      </if>
+	      <if test="pushLog.userChannelId != null" >
+	        AND user_channel_id = #{pushLog.userChannelId,jdbcType=INTEGER}
+	      </if>
+	      <if test="pushLog.appId != null" >
+	        AND app_id = #{pushLog.appId,jdbcType=INTEGER}
+	      </if>
+	      <if test="pushLog.appName != null" >
+	        AND app_name like CONCAT('%',#{pushLog.appName,jdbcType=VARCHAR},'%')
+	      </if>
+	      <if test="pushLog.appChannelId != null" >
+	        AND app_channel_id = #{pushLog.appChannelId,jdbcType=INTEGER}
+	      </if>
+	      <if test="pushLog.success != null" >
+	        AND success = #{pushLog.success,jdbcType=BIT}
+	      </if>
+	      <if test="startDate != null" >
+	        AND  create_time >= #{startDate,jdbcType=TIMESTAMP}
+	      </if>
+	      <if test="endDate != null" >
+	         <![CDATA[AND create_time <= #{endDate,jdbcType=TIMESTAMP}]]>
+	      </if>
+    </where>
+      order by create_time desc
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.PushLog" >
+    insert into push_log (openid, user_id, 
+      nickname, user_channel_id, app_id, 
+      app_name, app_channel_id, success, 
+      create_time)
+    values (#{openid,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+      #{nickname,jdbcType=VARCHAR}, #{userChannelId,jdbcType=INTEGER}, #{appId,jdbcType=INTEGER}, 
+      #{appName,jdbcType=VARCHAR}, #{appChannelId,jdbcType=INTEGER}, #{success,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateSuccById">
+  	update push_log set success = 1 where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

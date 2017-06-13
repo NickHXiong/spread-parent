@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.PushStatisticsMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.PushStatistics" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="pre_push_time" property="prePushTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, openid, app_id, num, pre_push_time, create_time
+  </sql>
+  
+  <select id="selectByAppIdAndOpenid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from push_statistics
+    where openid = #{openid,jdbcType=VARCHAR} AND app_id = #{appId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByOpenid" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from push_statistics
+    <if test="openid != null">
+	    where openid like CONCAT('%',#{openid,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+  
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.PushStatistics" >
+    insert into push_statistics (openid, app_id, 
+      num, pre_push_time, create_time
+      )
+    values (#{openid,jdbcType=VARCHAR}, #{appId,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER}, #{prePushTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <update id="plusNumByAppIdAndOpenid" >
+    update push_statistics set num = num + 1 
+    	where openid = #{openid,jdbcType=VARCHAR} AND app_id = #{appId,jdbcType=INTEGER}
+  </update>
+</mapper>

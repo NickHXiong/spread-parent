@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxd.spread.core.mapper.UserWithdrawalMapper" >
+  <resultMap id="BaseResultMap" type="com.wxd.spread.core.model.UserWithdrawal" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="cost_fee" property="costFee" jdbcType="INTEGER" />
+    <result column="operation_role" property="operationRole" jdbcType="INTEGER" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="describe" property="describe" jdbcType="VARCHAR" />
+    <result column="handle_time" property="handleTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, cost_fee, operation_role, admin_id, `describe`, handle_time, `status`, create_time
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_withdrawal
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wxd.spread.core.model.UserWithdrawal" >
+    insert into user_withdrawal (user_id, cost_fee, 
+      operation_role, admin_id, `describe`, 
+      handle_time, `status`, create_time
+      )
+    values (#{userId,jdbcType=INTEGER}, #{costFee,jdbcType=INTEGER}, 
+      #{operationRole,jdbcType=INTEGER}, #{adminId,jdbcType=INTEGER}, #{describe,jdbcType=VARCHAR}, 
+      #{handleTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <select id="selectListByCriteria" resultMap="BaseResultMap" parameterType="com.wxd.spread.core.model.UserWithdrawal" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_withdrawal
+    <where>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER}
+      </if>
+      <if test="operationRole != null" >
+        AND operation_role = #{operationRole,jdbcType=INTEGER}
+      </if>
+      <if test="adminId != null" >
+        AND admin_id = #{adminId,jdbcType=INTEGER}
+      </if>
+      <if test="status != null" >
+        AND status = #{status,jdbcType=INTEGER}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  
+  
+  <update id="updateSelectiveById" parameterType="com.wxd.spread.core.model.UserWithdrawal" >
+    update user_withdrawal
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="costFee != null" >
+        cost_fee = #{costFee,jdbcType=INTEGER},
+      </if>
+      <if test="operationRole != null" >
+        operation_role = #{.operationRole,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        admin_id = #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="describe != null" >
+        `describe` = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="handleTime != null" >
+        handle_time = #{handleTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    	where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

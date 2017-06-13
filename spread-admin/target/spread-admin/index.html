@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>首页</title>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+	function changeImage() {
+		//不需要直接再发一次请求，只需要改变src的地址
+	  	$("#imageCode").attr("src","/spread-admin/verifyCode.jpg?random=" + Math.random())
+	}
+	function login() {
+		$("#errMsgFont").html("");
+		var account = $("#account").val();
+		var password = $("#password").val();
+		var nonce = $("#nonce").val();
+		
+		if ($.trim(account) == '') {
+			$("#errMsgFont").html("账号必须填写");
+			return;
+		}
+		if ($.trim(password) == '') {
+			$("#errMsgFont").html("密码必须填写");
+			return;
+		}
+		if ($.trim(nonce) == '') {
+			$("#errMsgFont").html("验证码必须填写");
+			return;
+		}
+		
+		$.post("/spread-admin/login",{"account":account,"password":password,"nonce":nonce},function(data){
+			if (!data.success) {
+				changeImage();
+				$("#errMsgFont").html(data.msg);
+			} else {
+				window.location.href="/spread-admin/main";
+			}
+		},"json");
+	}
+</script>
+</head>
+<body>
+<h2>登录页面</h2>
+<div><font color="red" id="errMsgFont"></font></div>
+<div>
+	账号：<input type="text" id="account" name="account" value=""/> <br/>
+	密码：<input type="text" id="password" name="password" value=""/> <br/>
+	验证码：<input type="text" id="nonce" name="nonce" value=""/>
+	<img id="imageCode" src="/spread-admin/verifyCode.jpg" title="看不清？点击换一张" onclick="changeImage()" /> <br/>
+	<input type="button" value="登录" name="登录" onclick="login()" />
+</div>
+</body>
+</html>
